@@ -38,26 +38,9 @@ while IFS= read -r d; do
     export LD_LIBRARY_PATH="${d}:${LD_LIBRARY_PATH:-}"
 done < <(find "${SOLANUM_PREFIX}/lib" "${ATHEME_PREFIX}/lib" -mindepth 1 -maxdepth 1 -type d 2>/dev/null)
 
-# --- privilege drop -----------------------------------------------------------
-# Both daemons refuse to run as root (verified: conftest/boot fail on a clean
-# root container). In root CI runners, drop to a runtime user for everything
-# that executes the ircd/services; root only keeps package mgmt + builds.
-if [ "$(id -u)" = "0" ]; then
-    RUNTIME_USER="${RUNTIME_USER:-smokerun}"
-    id -u "${RUNTIME_USER}" >/dev/null 2>&1 || \
-        useradd --system --create-home --home-dir "/home/${RUNTIME_USER}" \
-                --shell /bin/bash "${RUNTIME_USER}"
-    chown -R "${RUNTIME_USER}:${RUNTIME_USER}" \
-        "${WORKDIR}" "${SOLANUM_PREFIX}" "${ATHEME_PREFIX}"
-    run_as_user() {
-        setpriv --reuid="${RUNTIME_USER}" --regid="${RUNTIME_USER}" --clear-groups \
-            env LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}" HOME="/home/${RUNTIME_USER}" "$@"
-    }
-else
-    run_as_user() { "$@"; }
-fi
-
 # --- stale-state cleanup (idempotent reruns) --------------------------------
+# Runs as the invoking user first: root here kills ANY stale daemon from
+# earlier runs; the user pass below then cleans up its own leftovers.
 pkill -9 -f "bin/solanum" 2>/dev/null || true
 pkill -9 -f atheme-services 2>/dev/null || true
 sleep 1
@@ -66,6 +49,25 @@ rm -f "${SOLANUM_PREFIX}/etc/ircd.pid" \
       "${ATHEME_PREFIX}"/etc/services.db* 2>/dev/null || true
 mkdir -p "${SOLANUM_PREFIX}/etc" "${SOLANUM_PREFIX}/var/log" \
          "${SOLANUM_PREFIX}/uids" "${ATHEME_PREFIX}/etc" "${ATHEME_PREFIX}/var/log"
+
+# --- privilege drop -----------------------------------------------------------
+# Both daemons AND the conftest mode refuse to run as root (verified in a
+# clean root container). In root CI runners we re-exec the WHOLE script as a
+# runtime user exactly once, so no solanum/atheme invocation site can ever
+# run with root privileges. Root only keeps package mgmt + builds.
+if [ "$(id -u)" = "0" ]; then
+    RUNTIME_USER="${RUNTIME_USER:-smokerun}"
+    id -u "${RUNTIME_USER}" >/dev/null 2>&1 || \
+        useradd --system --create-home --home-dir "/home/${RUNTIME_USER}" \
+                --shell /bin/bash "${RUNTIME_USER}"
+    chown -R "${RUNTIME_USER}:${RUNTIME_USER}" \
+        "${WORKDIR}" "${SOLANUM_PREFIX}" "${ATHEME_PREFIX}"
+    exec setpriv --reuid="${RUNTIME_USER}" --regid="${RUNTIME_USER}" --clear-groups \
+        env LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}" HOME="/home/${RUNTIME_USER}" \
+            SOLANUM_PREFIX="${SOLANUM_PREFIX}" ATHEME_PREFIX="${ATHEME_PREFIX}" \
+            WORKDIR="${WORKDIR}" \
+            bash "${BASH_SOURCE[0]}" "$@"
+fi
 
 # --- ircd.conf: testsuite template + services wiring -------------------------
 # Verified gotchas baked in: connect/service/server name must be identical
@@ -90,9 +92,9 @@ PY
 # absolute paths are mandatory (relative ones silently miss).
 IRCDCONF="${WORKDIR}/ircd.conf"
 SVCCONF="${WORKDIR}/services.conf"
-run_as_user "${SOLANUM}" -conftest "${IRCDCONF}" && echo "SMOKE: ircd conf validates"
+"${SOLANUM}" -conftest "${IRCDCONF}" && echo "SMOKE: ircd conf validates"
 
-run_as_user "${SOLANUM}" -foreground -configfile "${IRCDCONF}" > ircd.out 2>&1 &
+"${SOLANUM}" -foreground -configfile "${IRCDCONF}" > ircd.out 2>&1 &
 sleep 5
 
 # --- services.conf -----------------------------------------------------------
@@ -128,8 +130,8 @@ general {
 };
 EOF
 
-run_as_user "${ATHEME}" -b -c "${SVCCONF}" > dbinit.out 2>&1
-run_as_user "${ATHEME}" -c "${SVCCONF}" > services.out 2>&1 &
+"${ATHEME}" -b -c "${SVCCONF}" > dbinit.out 2>&1
+"${ATHEME}" -c "${SVCCONF}" > services.out 2>&1 &
 sleep 8
 
 # --- client: NickServ end to end ---------------------------------------------
@@ -194,7 +196,7 @@ PY
 
 fail=0
 
-if ! run_as_user "${SOLANUM}" -conftest "${IRCDCONF}" >/dev/null 2>&1; then
+if ! "${SOLANUM}" -conftest "${IRCDCONF}" >/dev/null 2>&1; then
     echo "SMOKE: ircd conftest FAILED"
     fail=1
 fi

@@ -1,0 +1,42 @@
+# Old-stack scheduled verification: runs the SAME 5-check gate as
+# old-stack.yml twice a day, no pushes required. Catches upstream drift
+# (the pinned refs are deliberate — a red scheduled run means the pins
+# need a deliberate bump) and exercises the source-build path on a clean
+# schedule.
+#
+# GH schedule cron is best-effort and can slip minutes during peak load.
+#
+# Runner note: fine on GH ephemeral runners as-is; if this ever moves to a
+# shared runner, the trap-based `docker compose down` teardown follow-up
+# becomes REQUIRED (the post-boot conftest bandb/sqlite collision,
+# see grill history on PR #2).
+
+name: old-stack-schedule
+
+on:
+  schedule:
+    # Twice daily (03:00 and 15:00 UTC).
+    - cron: "0 3,15 * * *"
+  workflow_dispatch:
+
+jobs:
+  old-stack-scheduled:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and bring up old stack (3 ircd + services)
+        working-directory: old-stack
+        run: docker compose -f compose.yaml up -d --build --wait
+
+      - name: Verify links, whois, and services round-trip
+        run: old-stack/scripts/verify.sh
+
+      - name: Stack logs on failure
+        if: failure()
+        working-directory: old-stack
+        run: |
+          docker compose -f compose.yaml ps || true
+          docker compose -f compose.yaml logs --tail=200 \
+            hub leaf-v4 leaf-v6 services || true

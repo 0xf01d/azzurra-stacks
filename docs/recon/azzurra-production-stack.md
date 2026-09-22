@@ -40,7 +40,7 @@ D1-D11), constraints C1-C2;
 issue #4). Options below — each row states whether a feature-parity path exists (with its milestone meta-issue) or the row is a moving-forward modernization; full per-cell evidence lives in the report.
 
 | Capability | azzurra-production | solanum-it | atheme-it | Backward-compatibility option | Forward option |
-|---|---|---|---|---|
+|---|---|---|---|---|---|
 | S2S protocol | TS + CAPAB tokens [E7] | TS6 (SID/UID), live link [E1] | U-lined TS6 service [E1] | TS3/CAPAB compatibility protocol module in solanum-it (upstream work, heavy) [E7] | TS6 SID/UID linking (current, live [E1]) |
 | Halfops (+h) | native, non-disableable [E7] | absent: zero source symbols, live 005 `PREFIX=(ov)@+` [E4/E5] | present [E6] | implement +h upstream (**M-1**, milestone [0.1.0](https://github.com/0xf01d/azzurra-stacks/milestone/1)); cost: medium [E4/E5] | o/v-only modern semantics (current) [E5] |
 | Cloaking | umode +x [E7] | no ircd-side cloak implementation [E4] | HostServ vHost [E6] | ircd-side cloak module (**M-3**, [#9](https://github.com/0xf01d/azzurra-stacks/issues/9)); cost: medium [E4] | HostServ vHost (current) [E6] |

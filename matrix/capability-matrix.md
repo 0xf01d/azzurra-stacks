@@ -31,8 +31,8 @@ against the -it forks (filled as the CI stacks come online).
 | DCCALLOW | ✅ (5) | ❌ (verified absent in -it source) | n/a | evaluate: legacy feature |
 | SHUN | ✅ | ✅ | n/a | none |
 | IRCv3 CAP framework | ❌ | ✅ (verified: message-tags 123 files, server-time, account-notify, extended-join) | n/a | ADDITIVE |
-| SeenServ | ✅ built-in | ❌ | ⚠️ module (cs_seen) | parity via atheme module |
-| StatServ | ✅ built-in | ❌ | ⚠️ stats module | parity via atheme module |
+| SeenServ | ✅ built-in | ❌ | ✅ contrib cs_seen (verify enabled in build) | parity via atheme contrib module |
+| StatServ | ✅ built-in | ❌ | ✅ statserv native | parity achieved |
 | RootServ hierarchy | ✅ (SRA list) | ❌ (opers + services root) | OperServ/SRA equivalent | document mapping |
 | Nick enforcement | RELEASE + enforcer (300s) | n/a | ✅ RELEASE/ENFORCER | none (services-side) |
 | Email-verified registration | ✅ (EMAIL:1, sendmail) | n/a | ✅ configurable | none |

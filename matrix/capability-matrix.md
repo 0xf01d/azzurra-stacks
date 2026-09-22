@@ -10,7 +10,7 @@ against the -it forks (filled as the CI stacks come online).
 | Capability | azzurra-production | solanum-it | atheme-it | Parity gap / action |
 |---|---|---|---|---|
 | S2S protocol | TS3 + CAPAB tokens, no SID/UID | TS6 (SID/UID) | links as TS6/U-lined service | ❌ intentional: modern protocol; no backport |
-| Halfops (+h) | native, non-disableable | ❓ (no halfop symbols in -it includes — verify +h at runtime; likely present under different naming) | ✅ | runtime-verify |
+| Halfops (+h) | native, non-disableable | ❌ (dropped upstream: no halfop symbols in -it source; live 005 ISUPPORT shows `PREFIX=(ov)@+` — o/v only) | ✅ | ❌ intentional: modern stacks dropped +h; re-evaluate only if Azzurra channels depend on HOP |
 | Cloaking | umode +x (ircd-side) | ⚠️ via services/IP-less host (verify -it cloak module) | HostServ vHost | decide: umode cloak parity or HostServ-only |
 | Registered nick umode +r | yes | ✅ (+r via services) | n/a (sets +r) | none |
 | Reg-only join (+R) | ✅ | ✅ | sets +R | none |
@@ -48,13 +48,16 @@ against the -it forks (filled as the CI stacks come online).
 | ALIS channel search | ❌ | n/a | ✅ alis | ADDITIVE (optional load) |
 | Access model | CFOUNDER/SOP/AOP/HOP/AVOICE xN tiers | n/a | ✅ XOP + ACL | none |
 | WEBIRC | ✅ | ✅ (verified: 3 source files) | n/a | none |
-| HAProxy ingress | ✅ | ❓ (no PROXY-protocol hits in -it source; verify at runtime) | n/a | verify at runtime |
+| HAProxy ingress | ✅ | ❌ native PROXY protocol (no PROXY handshake handling in -it source; only legacy open-proxy scan docs) — ⚠️ WEBIRC covers the same ingress need (verified: 3 source files) | n/a | terminate HAProxy as TCP passthrough + WEBIRC from the edge, or TLS at the ircd |
 | Flood/clone detection | services-side tiers + clone warn→kill | ircd throttle | ✅ services limits | split across layers |
 
 ## Parity work queue (additive only — zero solanum features removed)
 
 1. ✅ CI: dual stacks green (this repo).
-2. Verify -it cells marked ❓ against the running CI stacks; update this matrix.
+2. ✅ Verify -it cells marked ❓ against the running stacks (2026-09-22):
+   halfops ❌ (live 005 ISUPPORT), PROXY ingress ❌ / WEBIRC ⚠️ (source).
+   Runtime-verified via the new-stack smoke (live NickServ proof: link,
+   REGISTER pbkdf2v2, 900 auto-login, INFO) — atheme-it column confirmed.
 3. atheme-it config: NICK/CHAN expiry to 40d, EMAIL-verified registration — config-only parity.
 4. Cloak parity decision: umode +x equivalent vs HostServ vHost.
 5. SeenServ/StatServ parity via atheme modules (module load, config).

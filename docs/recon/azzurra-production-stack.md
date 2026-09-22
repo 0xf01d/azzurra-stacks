@@ -35,44 +35,45 @@ No IRCv3 CAP framework [INFERENCE: none seen in headers]; ISUPPORT list generate
 ## 4. CAPABILITY COMPARISON (RESOLVED)
 
 Filled from the definitive capability report: `matrix/capability-matrix.md`
-(merged c8d86d2 — evidence refs E1-E7, decisions D1-D11, constraints C1-C2;
+(merged c8d86d2 — evidence refs E1-E7, options O1-O11 (formerly
+D1-D11), constraints C1-C2;
 issue #4). Verdicts below; full per-cell evidence lives in the report.
 
 | Capability | azzurra-production | solanum-it | atheme-it | Verdict |
 |---|---|---|---|---|
 | S2S protocol | TS + CAPAB tokens [E7] | TS6 (SID/UID), live link [E1] | U-lined TS6 service [E1] | intentional modernization; no backport |
 | Halfops (+h) | native, non-disableable [E7] | absent: zero source symbols, live 005 `PREFIX=(ov)@+` [E4/E5] | present [E6] | upstream removal → gap M-1 (milestone 0.1.0) |
-| Cloaking | umode +x [E7] | no ircd-side cloak implementation [E4] | HostServ vHost [E6] | D4: cloaking is services-side |
+| Cloaking | umode +x [E7] | no ircd-side cloak implementation [E4] | HostServ vHost [E6] | O4: paths evaluated (HostServ vHost / ircd cloak module **M-3** #9 / hybrid) — no pick |
 | Registered nick umode (+r) | +r [E7] | set via services [E2] | sets +r | none |
 | Reg-only channel (+R) | yes [E7] | yes | sets +R | none |
 | No-color (+c) | yes [E7] | yes | n/a (ircd) | none |
 | No-CTCP (+C) | yes [E7] | yes | n/a (ircd) | none |
 | Oper-only (+O) | yes [E7] | yes | n/a (ircd) | none |
-| SSL-only (+S) | umode+chmode [E7] | listener-level TLS; no dedicated +S flag [E4] | n/a (ircd) | D5: TLS-only enforced at the listener |
+| SSL-only (+S) | umode+chmode [E7] | listener-level TLS; no dedicated +S flag [E4] | n/a (ircd) | O5: paths evaluated (listener TLS policy / +S mode **M-4** #10 / services-side gating) — no pick |
 | Moderated-for-unreg (+M) | yes [E7] | `MODE_REGONLY` registered-only [E4] | sets +M | none |
-| Hide banlist (+B) | yes [E7] | +b view restricted to ops [E4] | n/a (ircd) | D10: semantics differ, no port |
+| Hide banlist (+B) | yes [E7] | +b view restricted to ops [E4] | n/a (ircd) | O10: paths evaluated (accept differing semantics / resyntax **M-7** #13) — no pick |
 | Registered-join restrict (+j/+z) | two flavors [E7] | +j = join throttle [E4] | n/a (ircd) | D10: semantics differ, no port |
 | Ban exceptions (+e) | no [E7] | yes (28 source files) [E4] | n/a | ADDITIVE |
 | INVEX (+I) | no [E7] | yes (19 source files) [E4] | n/a | ADDITIVE |
 | Extbans | EBMODE token only [E7] | $-extbans (22 source files) [E4] | n/a | ADDITIVE |
 | WATCH/MONITOR | WATCH [E7] | MONITOR (28 source files) [E4] | n/a | ADDITIVE (modern) |
 | SILENCE | yes (10) [E7] | yes | n/a | none |
-| DCCALLOW | yes (5 files) [E7] | absent [E4] | n/a | D9: not ported (legacy) |
+| DCCALLOW | yes (5 files) [E7] | absent [E4] | n/a | O9: paths evaluated (accept gap / upstream port **M-6** #12 / services-side approximation) — no pick |
 | SHUN | yes [E7] | yes | n/a | none |
 | IRCv3 CAP | no [E7] | message-tags (123 files), server-time, account-notify, extended-join [E4] | n/a | ADDITIVE |
-| SeenServ | built-in [E7] | n/a | contrib cs_seen in tree [E6] | D7: loaded in deployment config |
+| SeenServ | built-in [E7] | n/a | contrib cs_seen in tree [E6] | O7: paths evaluated (contrib load / native service / accept gap) — no pick |
 | StatServ | built-in [E7] | n/a | statserv native [E6] | parity achieved |
-| RootServ hierarchy | SRA list [E7] | n/a | OperServ + services root [E6] | D8: maps to OperServ + services root |
+| RootServ hierarchy | SRA list [E7] | n/a | OperServ + services root [E6] | O8: paths evaluated (OperServ mapping / dedicated service **M-5** #11 / oper classes) — no pick |
 | Nick enforcement | RELEASE + enforcer (300s) [E7] | n/a | RELEASE/ENFORCER [E6] | none (services-side) |
-| Email-verified reg | EMAIL:1 [E7] | n/a | configurable [E6] | D6: enabled in deployment config |
-| Nick/Chan expiry 40d | NICKEXP/CHANEXP 40d [E7] | n/a | configurable [E6] | D6: 40d in deployment config |
+| Email-verified reg | EMAIL:1 [E7] | n/a | configurable [E6] | O6: paths evaluated (config-only parity / keep defaults) — no pick |
+| Nick/Chan expiry 40d | NICKEXP/CHANEXP 40d [E7] | n/a | configurable [E6] | O6: paths evaluated (config-only parity / keep defaults) — no pick |
 | MemoServ | yes, 21d expiry [E7] | n/a | MemoServ [E6] | none |
 | SASL authentication | no [E7] | n/a | saslserv [E6] | ADDITIVE |
-| HostServ vHosts | +x cloaks only [E7] | n/a | hostserv [E6] | ADDITIVE; canonical cloaking per D4 |
+| HostServ vHosts | +x cloaks only [E7] | n/a | hostserv [E6] | ADDITIVE; cloaking paths in O4 |
 | BotServ / GroupServ / ChanFix / GameServ / RPGServ / ALIS | no [E7] | n/a | all present [E6] | ADDITIVE (optional loads) |
 | Access model | CFOUNDER/SOP/AOP/HOP/AVOICE [E7] | n/a | XOP + ACL [E6] | none |
-| WEBIRC/HAProxy ingress | both [E7] | WEBIRC yes (3 files); no PROXY listener [E4] | n/a | D1: HAProxy TCP passthrough + WEBIRC canonical; native PROXY = gap M-2 (milestone 0.1.0) |
-| Flood/clone detection | tiers + clone warn-kill [E7] | ircd throttle [E4] | services limits [E6] | D11: two-layer enforcement |
+| WEBIRC/HAProxy ingress | both [E7] | WEBIRC yes (3 files); no PROXY listener [E4] | n/a | O1: paths evaluated (WEBIRC passthrough / native PROXY listener **M-2** #7 / TLS-at-ircd) — no pick |
+| Flood/clone detection | tiers + clone warn-kill [E7] | ircd throttle [E4] | services limits [E6] | O11: paths evaluated (two-layer as-is / azzurra-tier services module **M-8** #14 / ircd extensions) — no pick |
 
 Upstream implementation gaps tracked in milestone
 [0.1.0 — feature parity](https://github.com/0xf01d/azzurra-stacks/milestone/1):

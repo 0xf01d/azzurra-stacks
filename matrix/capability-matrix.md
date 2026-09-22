@@ -28,37 +28,37 @@ order fix, applied conditionally by `new-stack/build-atheme.sh`).
 Legend: ✅ native · ⚠️ different mechanism · ❌ absent · n/a services-side or
 ircd-side only. Every cell cites its evidence ref.
 
-| Capability | azzurra-production | solanum-it | atheme-it | Resolution |
+| Capability | azzurra-production | solanum-it | atheme-it | Options (see [O-section](#options-o1–o11--formerly-decisions-d1–d11)) |
 |---|---|---|---|---|
 | S2S protocol | TS3 + CAPAB tokens, no SID/UID [E7] | TS6 (SID/UID) [E1: live link] | links as TS6/U-lined service [E1: 2-server net] | ❌ intentional modernization; no backport |
 | Halfops (+h) | native, non-disableable [E7] | ❌ zero halfop symbols in source [E4]; live 005 `PREFIX=(ov)@+` o/v only [E5] | ✅ | ❌ intentional upstream removal → **upstream gap M-1 (milestone 0.1.0)** |
-| Cloaking | umode +x (ircd-side) [E7] | ❌ no ircd-side cloak implementation (docs-only mentions) [E4] | ✅ HostServ vHost [E6] | ⚠️ **OPTIONS O4** — paths: HostServ vHost / ircd-side cloak module / hybrid; no pick |
+| Cloaking | umode +x (ircd-side) [E7] | ❌ no ircd-side cloak implementation (docs-only mentions) [E4] | ✅ HostServ vHost [E6] | ⚠️ **OPTIONS [O4](#o4)** — feature-parity path: ircd-side cloak module (**M-3**, #9); alternatives: HostServ vHost / hybrid; no pick |
 | Registered nick umode +r | yes [E7] | ✅ set via services [E2: registered client] | n/a (sets +r) | none |
 | Reg-only join (+R) | ✅ [E7] | ✅ | sets +R | none |
 | No-color (+c) | ✅ [E7] | ✅ | n/a (ircd) | none |
 | No-CTCP (+C) | ✅ [E7] | ✅ | n/a (ircd) | none |
 | Oper-only (+O) | ✅ [E7] | ✅ | n/a (ircd) | none |
-| SSL-only (+S umode/+S chmode) | ✅ umode+chmode [E7] | ⚠️ no dedicated TLS-only channel-mode flag in source [E4]; TLS enforcement is listener-level (ssl listen blocks) | n/a (ircd) | ⚠️ **OPTIONS O5** — paths: listener TLS policy / +S mode upstream / services-side gating; no pick |
+| SSL-only (+S umode/+S chmode) | ✅ umode+chmode [E7] | ⚠️ no dedicated TLS-only channel-mode flag in source [E4]; TLS enforcement is listener-level (ssl listen blocks) | n/a (ircd) | ⚠️ **OPTIONS [O5](#o5)** — feature-parity path: +S mode upstream (**M-4**, #10); alternatives: listener TLS policy / services-side gating; no pick |
 | Moderated-for-unreg (+M) | ✅ [E7] | ✅ `MODE_REGONLY` registered-only semantics (`include/channel.h:178`, enforced `modules/m_invite.c:174`) [E4] | sets +M | none |
-| No-nick-change (+d) | ✅ [E7] | ❌ no mode flag in source [E4] | n/a | ❌ **OPTIONS O9** — paths: accept gap / upstream port / services-side approximation; no pick |
-| No-spam (+u) | ✅ [E7] | ❌ no mode flag in source [E4] | n/a | ❌ **OPTIONS O9** — paths: accept gap / upstream port / services-side approximation; no pick |
-| Hide banlist (+B) | ✅ [E7] | ⚠️ +b view restricted to ops by default | n/a | ⚠️ **OPTIONS O10** — paths: accept differing semantics / upstream resyntax; no pick |
-| Registered-join restrict (+j) | ✅ registered-join [E7] | ⚠️ +j = join throttle [E4] | n/a | ⚠️ **OPTIONS O10** — paths: accept differing semantics / upstream resyntax; no pick |
+| No-nick-change (+d) | ✅ [E7] | ❌ no mode flag in source [E4] | n/a | ❌ **OPTIONS [O9](#o9)** — feature-parity path: upstream port (**M-6**, #12); alternatives: accept gap / services-side approximation; no pick |
+| No-spam (+u) | ✅ [E7] | ❌ no mode flag in source [E4] | n/a | ❌ **OPTIONS [O9](#o9)** — feature-parity path: upstream port (**M-6**, #12); alternatives: accept gap / services-side approximation; no pick |
+| Hide banlist (+B) | ✅ [E7] | ⚠️ +b view restricted to ops by default | n/a | ⚠️ **OPTIONS [O10](#o10)** — feature-parity path: resyntax upstream (**M-7**, #13); alternative: accept differing semantics; no pick |
+| Registered-join restrict (+j) | ✅ registered-join [E7] | ⚠️ +j = join throttle [E4] | n/a | ⚠️ **OPTIONS [O10](#o10)** — feature-parity path: resyntax upstream (**M-7**, #13); alternative: accept differing semantics; no pick |
 | Ban exceptions (+e) | ❌ [E7] | ✅ (28 source files) [E4] | n/a | ADDITIVE (forks ahead) |
 | INVEX (+I) | ❌ [E7] | ✅ (19 source files) [E4] | n/a | ADDITIVE |
 | Extbans ($-syntax) | ❌ (EBMODE token, +z only) [E7] | ✅ (22 source files) [E4] | n/a | ADDITIVE |
 | WATCH/MONITOR | WATCH [E7] | ✅ MONITOR (28 source files) [E4] | n/a | ADDITIVE (modern) |
 | SILENCE | ✅ [E7] | ✅ | n/a | none |
-| DCCALLOW | ✅ (5 files) [E7] | ❌ absent in source [E4] | n/a | ❌ **OPTIONS O9** — paths: accept gap / upstream port / services-side approximation; no pick |
+| DCCALLOW | ✅ (5 files) [E7] | ❌ absent in source [E4] | n/a | ❌ **OPTIONS [O9](#o9)** — feature-parity path: upstream port (**M-6**, #12); alternatives: accept gap / services-side approximation; no pick |
 | SHUN | ✅ [E7] | ✅ | n/a | none |
 | IRCv3 CAP framework | ❌ [E7] | ✅ message-tags (123 files), server-time, account-notify, extended-join [E4] | n/a | ADDITIVE |
-| SeenServ | ✅ built-in [E7] | ❌ | ✅ contrib cs_seen in tree [E6] | ✅ **OPTIONS O7** — paths: contrib load / native service / accept gap; no pick |
+| SeenServ | ✅ built-in [E7] | ❌ | ✅ contrib cs_seen in tree [E6] | ✅ **OPTIONS [O7](#o7)** — feature-parity path: contrib cs_seen load (config-only, no upstream gap); alternatives: native service / accept gap; no pick |
 | StatServ | ✅ built-in [E7] | ❌ | ✅ statserv native [E6] | ✅ parity achieved |
-| RootServ hierarchy | ✅ (SRA list) [E7] | ❌ (opers + services root) | ✅ OperServ + services root [E6] | ⚠️ **OPTIONS O8** — paths: OperServ mapping / dedicated service / oper classes; no pick |
+| RootServ hierarchy | ✅ (SRA list) [E7] | ❌ (opers + services root) | ✅ OperServ + services root [E6] | ⚠️ **OPTIONS [O8](#o8)** — feature-parity path: dedicated service (**M-5**, #11); alternatives: OperServ mapping / oper classes; no pick |
 | Nick enforcement | RELEASE + enforcer (300s) [E7] | n/a | ✅ RELEASE/ENFORCER [E6] | none (services-side) |
-| Email-verified registration | ✅ (EMAIL:1, sendmail) [E7] | n/a | ✅ configurable [E6] | ✅ **OPTIONS O6** — paths: config-only parity / keep defaults; no pick |
-| Nick expiry | 40d [E7] | n/a | ✅ configurable [E6] | ✅ **OPTIONS O6** — paths: config-only parity / keep defaults; no pick |
-| Channel expiry | 40d [E7] | n/a | ✅ configurable [E6] | ✅ **OPTIONS O6** — paths: config-only parity / keep defaults; no pick |
+| Email-verified registration | ✅ (EMAIL:1, sendmail) [E7] | n/a | ✅ configurable [E6] | ✅ **OPTIONS [O6](#o6)** — feature-parity path: config-only parity (no upstream gap); alternative: keep defaults; no pick |
+| Nick expiry | 40d [E7] | n/a | ✅ configurable [E6] | ✅ **OPTIONS [O6](#o6)** — feature-parity path: config-only parity (no upstream gap); alternative: keep defaults; no pick |
+| Channel expiry | 40d [E7] | n/a | ✅ configurable [E6] | ✅ **OPTIONS [O6](#o6)** — feature-parity path: config-only parity (no upstream gap); alternative: keep defaults; no pick |
 | MemoServ | ✅ (21d expiry) [E7] | n/a | ✅ MemoServ [E6] | none |
 | SASL authentication | ❌ [E7] | n/a | ✅ saslserv [E6] | ADDITIVE |
 | HostServ vHosts | ❌ (+x cloaks only) [E7] | n/a | ✅ hostserv [E6] | ADDITIVE; cloaking paths in O4 |
@@ -69,8 +69,8 @@ ircd-side only. Every cell cites its evidence ref.
 | ALIS channel search | ❌ [E7] | n/a | ✅ alis [E6] | ADDITIVE (optional load) |
 | Access model | CFOUNDER/SOP/AOP/HOP/AVOICE tiers [E7] | n/a | ✅ XOP + ACL [E6] | none |
 | WEBIRC | ✅ [E7] | ✅ (3 source files) [E4] | n/a | none |
-| HAProxy ingress | ✅ [E7] | ❌ native PROXY protocol (no handshake handling in source [E4]); ✅ WEBIRC available [E4] | n/a | ⚠️ **OPTIONS O1** — paths: WEBIRC passthrough / native PROXY listener (**M-2**, milestone 0.1.0) / TLS-at-ircd; no pick |
-| Flood/clone detection | services-side tiers + clone warn→kill [E7] | ircd throttle [E4] | ✅ services limits [E6] | ⚠️ **OPTIONS O11** — paths: two-layer as-is / azzurra-tier services module / ircd extensions; no pick |
+| HAProxy ingress | ✅ [E7] | ❌ native PROXY protocol (no handshake handling in source [E4]); ✅ WEBIRC available [E4] | n/a | ⚠️ **OPTIONS [O1](#o1)** — feature-parity path: native PROXY listener (**M-2**, #7); alternatives: WEBIRC passthrough / TLS-at-ircd; no pick |
+| Flood/clone detection | services-side tiers + clone warn→kill [E7] | ircd throttle [E4] | ✅ services limits [E6] | ⚠️ **OPTIONS [O11](#o11)** — feature-parity path: azzurra-tier services module (**M-8**, #14); alternatives: two-layer as-is / ircd extensions; no pick |
 
 ## Options (O1–O11 — formerly Decisions D1–D11)
 
@@ -82,6 +82,7 @@ ircd-side only. Every cell cites its evidence ref.
 > implementation in solanum-it/atheme-it, with scope/cost estimate and the
 > milestone 0.1.0 link where it applies) alongside the alternatives.
 
+<a id="o1"></a>
 - **O1 — HAProxy ingress.**
   - P-a (current stack behavior): HAProxy TCP passthrough + WEBIRC from the
     edge. Mechanism: no ircd code; edge authenticates via WEBIRC. Tradeoffs:
@@ -95,6 +96,7 @@ ircd-side only. Every cell cites its evidence ref.
   - P-c: TLS termination at the ircd (HAProxy pure TCP, certs on the ircd).
     Tradeoffs: one less trust hop; cert management moves to the ircd prefix.
     Cost/risk: low-medium (ops).
+<a id="o4"></a>
 - **O4 — Cloaking.**
   - P-a (current stack behavior): services-side HostServ vHost. Tradeoffs:
     per-account vHosts, no ircd code; +x-style automatic cloaking is absent.
@@ -105,6 +107,7 @@ ircd-side only. Every cell cites its evidence ref.
     parity implementation tracked as **M-3** (issue #9, milestone 0.1.0).
   - P-c: hybrid — automatic cloak at connect + HostServ override. Tradeoffs:
     closest to azzurra UX; two mechanisms to operate. Cost/risk: medium-high.
+<a id="o5"></a>
 - **O5 — TLS-only enforcement.**
   - P-a (current stack behavior): listener-level policy (ssl listen blocks;
     azzurra-style +S not available). Tradeoffs: per-port, not per-channel.
@@ -116,12 +119,14 @@ ircd-side only. Every cell cites its evidence ref.
   - P-c: services-side gating (channel +R/+M combinations approximating
     SSL-only for registered users). Tradeoffs: approximate; unregistered TLS
     users still join. Cost/risk: low.
+<a id="o6"></a>
 - **O6 — Services config parity (expiry + e-mail verification).**
   - P-a (**feature parity** — config-only): deployment config sets NICK/CHAN
     expiry to 40d and enables e-mail-confirmed registration. Scope: config
     values only. Cost/risk: low; no milestone (not upstream code).
   - P-b: keep atheme defaults (shorter expiry, no mail confirmation).
     Tradeoffs: diverges from azzurra behavior users expect. Cost/risk: none.
+<a id="o7"></a>
 - **O7 — SeenServ.**
   - P-a (**feature parity** — module load): enable contrib cs_seen in the
     deployment config. Scope: one loadmodule line + channel registration
@@ -131,6 +136,7 @@ ircd-side only. Every cell cites its evidence ref.
     service module + storage). Cost/risk: high; milestone 0.1.0 if picked.
   - P-c: accept the gap (ALIS + channel logging cover the use case).
     Tradeoffs: user-visible feature loss vs azzurra. Cost/risk: none.
+<a id="o8"></a>
 - **O8 — RootServ hierarchy.**
   - P-a (current stack behavior): OperServ + services-root privileges cover
     SRA functions. Tradeoffs: no dedicatedRootServ UX. Cost/risk: none.
@@ -140,6 +146,7 @@ ircd-side only. Every cell cites its evidence ref.
   - P-c: fold SRA functions into oper classes + OperServ SA/RA command set.
     Tradeoffs: keeps one service; slightly different command UX. Cost/risk:
     low-medium.
+<a id="o9"></a>
 - **O9 — Legacy channel modes (+d / +u) and DCCALLOW.**
   - P-a (current stack behavior): accept the gap (upstream solanum removed
     them deliberately). Tradeoffs: azzurra channels relying on them lose that
@@ -151,6 +158,7 @@ ircd-side only. Every cell cites its evidence ref.
   - P-c: services-side approximations (ChanServ mode-lock for +u-ish policy;
     DCCALLOW replaced by network policy docs). Tradeoffs: partial enforcement.
     Cost/risk: low-medium.
+<a id="o10"></a>
 - **O10 — +B / +j semantics.**
   - P-a (current stack behavior): accept solanum semantics (+b view
     ops-restricted; +j join throttle). Tradeoffs: azzurra meanings absent.
@@ -162,6 +170,7 @@ ircd-side only. Every cell cites its evidence ref.
   - P-c: extban-based approximations ($-extbans registered/joined).
     Tradeoffs: close UX via existing ADDITIVE extban framework. Cost/risk:
     low.
+<a id="o11"></a>
 - **O11 — Flood/clone detection.**
   - P-a (current stack behavior): two-layer enforcement (ircd throttles +
     services limits). Tradeoffs: azzurra's warn→globops→kill tiers and clone

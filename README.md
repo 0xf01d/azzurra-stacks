@@ -38,10 +38,12 @@ HARD CONSTRAINT: zero solanum features removed.
 ### Resolved pins (resolve once at authoring time; hardcode with comments)
 - azzurra/bahamut `master` @ `178ada510aa6f35c3bd772de55f079d8f4d44631`
 - azzurra/services `master` @ `5b38d02573ae93c76eeec8f5065607b5767e9538`
-- GHCR pulls: `unauthorized` **in this sandbox**, but work fine inside GitHub
-  Actions (public images, anonymous) — CI pulls, local runs may need
-  `docker login ghcr.io`. Resolve the image digests in a workflow step (or
-  after a local login), then pin `image: ...@sha256:<digest>`.
+- GHCR pulls: the `ghcr.io/azzurra/*` packages are **PRIVATE** — anonymous
+  pull is rejected (verified twice: `ghcr.io/token` returns UNAUTHORIZED for
+  the package scope, and `docker pull` fails the same way). The earlier
+  "CI pulls fine" assumption was wrong. Resolution in the adopted pipeline:
+  build from source at the pinned SHAs above (works everywhere, ~5 min);
+  `old-stack/compose.ghcr.yaml` is kept for logged-in local use only.
 
 ### Design settled from recon (reference: vjt/azzurra-testnet @ f7cafda)
 - Topology: hub + leaf2 + leaf3 (3 ircd, all IPv4 — `options.h_hub` has
@@ -73,7 +75,38 @@ HARD CONSTRAINT: zero solanum features removed.
   (else fresh-channel JOINs get no ops for 5 min) and `#undef THROTTLE_ENABLE`
   (CI reconnect storms trip it).
 
-### TODO (in order)
+### ADOPTED 2026-09-22 by work_0ndHP — pipeline implemented, all checks green
+
+The adopting lane implemented the pipeline with two deliberate deviations
+from the TODOs, both forced by facts on the ground:
+
+1. **Build-from-source is primary, GHCR override secondary.** The
+   `ghcr.io/azzurra/*` packages are private (see corrected note above), so
+   the "compose pull (digest-pinned)" path cannot run on GitHub-hosted
+   runners at all. `old-stack/compose.yaml` builds both images from the
+   pinned SHAs (~5 min, cached); `compose.ghcr.yaml` remains as the
+   logged-in override.
+2. **`scripts/verify.sh` (sh + nc) instead of smoke.py** — same assertion
+   list, minus LUSERS, plus two stronger ones. Five checks, each retried
+   against a 240s deadline, transcripts dumped on failure:
+   ChanServ round-trip (services link); oper LINKS showing **all four**
+   servers (bahamut-azzurra has no MAP command — 421 Unknown command; the
+   TODO's LINKS/LUSERS items collapse into this); cross-leaf WHOIS (user
+   visibility); NickServ REGISTER + IDENTIFY landing +r / RPL_WHOISREGNICK
+   307 on a leaf (the per-leaf U:line path); cross-leaf channel message
+   (hub PRIVMSG → leaf receipt). Also two probe mechanics the TODOs implied
+   but didn't name: Azzurra NickServ REGISTER requires `REGISTER <password>
+   <email>` (syntax error otherwise), and in-network nc sessions need
+   `-w 45` because bahamut stalls registration on absent PTR only from the
+   host, while probe idle gaps longer than the default timeout kill the
+   session.
+
+`.github/workflows/old-stack.yml` runs the five checks on every push/PR
+touching `old-stack/**` (+ workflow_dispatch), ubuntu-latest, 30 min cap,
+compose logs on failure. Locally proven end to end: **5/5 green** (clean
+run 88s after image cache warm).
+
+### TODO (original, superseded by the adoption notes above)
 1. `old-stack/`: compose.yaml (cert-init + hub/leaf2/leaf3/services + a
    `smoke` profile service attached to all three nets), compose.build.yaml
    (build fallback; `image: !reset null` + build args), bahamut/{Dockerfile,

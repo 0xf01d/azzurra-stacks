@@ -11,13 +11,13 @@ Baseline recon: `docs/recon/azzurra-production-stack.md`.
 
 | Ref | Evidence |
 |---|---|
-| E1 | New-stack CI run [`35769882235`](https://github.com/0xf01d/azzurra-stacks/actions/runs/35769882235) SUCCESS @ 169c758 (PR #2, merged 11673659): solanum-it + atheme-it source builds from pinned refs + live services smoke (conftest, client 001, services link, WHOIS NickServ, REGISTER pbkdf2v2 + 900 auto-login, INFO) |
-| E2 | Live proof chain `proof2-v3.sh` (archived at `.state/orch/state/atheme-it/` in the fleet workspace), executed in fresh containers through a 3-round grill: d57e6ed → 3bf901b → e3beae3 → 2a7f0fe |
-| E3 | Old-stack CI run [`35769666870`](https://github.com/0xf01d/azzurra-stacks/actions/runs/35769666870) SUCCESS @ 15d2981 (PR #1, merged 454e4d0, merge commit e0bbb68): 3×bahamut + services vendored stack built from pinned SHAs, 5/5 verify (source build, ChanServ round-trip, oper /links across four servers, cross-leaf whois, NickServ REGISTER/IDENTIFY 307, cross-leaf channel message) |
-| E4 | solanum-it source @ 96b2cfa1: +e (28 files), +I (19), extbans (22), MONITOR (28), message-tags (123), RESV (32), WEBIRC (3); halfop symbols: zero; cloak implementation: zero (docs mentions only); `MODE_REGONLY` at `include/channel.h:178` enforced in `modules/m_invite.c:174`; no `MODE_NOSPAM`/no-nick-change flag; no dedicated TLS-only channel-mode flag |
-| E5 | Live 005 ISUPPORT captured by the smoke client on solanum-it: `PREFIX=(ov)@+` (o/v only — no halfop letter), chmode list contains no +h |
-| E6 | atheme-it fork @ 88de242f module inventory: statserv (native), nickserv/{main,register,info,ghost,access,badmail,cert,drop,enforce,freeze,group,help,hold,identify}, contrib cs_seen, saslserv, hostserv, botserv, groupserv, chanfix, gameserv/rpgserv, alis, crypto/pbkdf2v2; `misc/account` absent from the build tree |
-| E7 | azzurra/bahamut source audit (recon): +h native, WATCH, DCCALLOW (5 files), SHUN, TS3+CAPAB S2S, SRA root list, EMAIL-verified registration |
+| <a id="ev-e1"></a>E1 | New-stack CI run [`35769882235`](https://github.com/0xf01d/azzurra-stacks/actions/runs/35769882235) SUCCESS @ 169c758 (PR #2, merged 11673659): solanum-it + atheme-it source builds from pinned refs + live services smoke (conftest, client 001, services link, WHOIS NickServ, REGISTER pbkdf2v2 + 900 auto-login, INFO) |
+| <a id="ev-e2"></a>E2 | Live proof chain `proof2-v3.sh` (archived at `.state/orch/state/atheme-it/` in the fleet workspace), executed in fresh containers through a 3-round grill: d57e6ed → 3bf901b → e3beae3 → 2a7f0fe |
+| <a id="ev-e3"></a>E3 | Old-stack CI run [`35769666870`](https://github.com/0xf01d/azzurra-stacks/actions/runs/35769666870) SUCCESS @ 15d2981 (PR #1, merged 454e4d0, merge commit e0bbb68): 3×bahamut + services vendored stack built from pinned SHAs, 5/5 verify (source build, ChanServ round-trip, oper /links across four servers, cross-leaf whois, NickServ REGISTER/IDENTIFY 307, cross-leaf channel message) |
+| <a id="ev-e4"></a>E4 | solanum-it source @ [96b2cfa1](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621): +e (28 files; exemplar [`MODE_EXLIMIT` include/channel.h:179](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/include/channel.h#L179)), +I (19), extbans (22; exemplar [`extensions/extb_account.c`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/extensions/extb_account.c)), MONITOR (28; exemplar [`modules/m_monitor.c`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/modules/m_monitor.c)), message-tags (123; exemplar [`include/msgbuf.h`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/include/msgbuf.h)), RESV (32; exemplar [`modules/m_resv.c`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/modules/m_resv.c)), WEBIRC (3; exemplar [`extensions/m_webirc.c`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/extensions/m_webirc.c)); halfop symbols: zero; cloak implementation: zero (docs mentions only); `MODE_REGONLY` at [`include/channel.h:178`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/include/channel.h#L178) enforced in [`modules/m_invite.c:174`](https://github.com/0xf01d/solanum-it/blob/96b2cfa1a13a8ad30a6dd85af540cd0f6f74a621/modules/m_invite.c#L174); no `MODE_NOSPAM`/no-nick-change flag; no dedicated TLS-only channel-mode flag |
+| <a id="ev-e5"></a>E5 | Live 005 ISUPPORT captured by [the smoke client](https://github.com/0xf01d/azzurra-stacks/blob/11673659/new-stack/smoke-atheme.sh) on solanum-it: `PREFIX=(ov)@+` (o/v only — no halfop letter), chmode list contains no +h |
+| <a id="ev-e6"></a>E6 | atheme-it fork @ [88de242f](https://github.com/0xf01d/atheme-it/blob/88de242f4755394746444c7bd28da15127d976d2) module inventory ([`modules/`](https://github.com/0xf01d/atheme-it/blob/88de242f4755394746444c7bd28da15127d976d2/tree/88de242f4755394746444c7bd28da15127d976d2/modules), exemplar [`modules/statserv`](https://github.com/0xf01d/atheme-it/blob/88de242f4755394746444c7bd28da15127d976d2/tree/88de242f4755394746444c7bd28da15127d976d2/modules/statserv)): statserv (native), nickserv/{main,register,info,ghost,access,badmail,cert,drop,enforce,freeze,group,help,hold,identify}, contrib cs_seen, saslserv, hostserv, botserv, groupserv, chanfix, gameserv/rpgserv, alis, crypto/pbkdf2v2; `misc/account` absent from the build tree |
+| <a id="ev-e7"></a>E7 | azzurra/bahamut source audit ([recon](docs/recon/azzurra-production-stack.md)): +h native, WATCH, DCCALLOW (5 files), SHUN, TS3+CAPAB S2S, SRA root list, EMAIL-verified registration |
 
 Pinned refs: solanum-it `96b2cfa1`, atheme-it `88de242f` (both built + smoked by
 E1; atheme autoregen additionally pinned to the `configure.ac` AC_INIT/AC_LANG
@@ -28,49 +28,49 @@ order fix, applied conditionally by `new-stack/build-atheme.sh`).
 Legend: ✅ native · ⚠️ different mechanism · ❌ absent · n/a services-side or
 ircd-side only. Every cell cites its evidence ref.
 
-| Capability | azzurra-production | solanum-it | atheme-it | Backward-compatibility option | Forward option |
-|---|---|---|---|---|---|
-| S2S protocol | TS3 + CAPAB tokens, no SID/UID [E7] | TS6 (SID/UID) [E1: live link] | links as TS6/U-lined service [E1: 2-server net] | TS3/CAPAB compatibility protocol module in solanum-it (upstream work, heavy; re-opens legacy-link support) [E7] | TS6 SID/UID linking (current, live [E1]) — modern, no legacy-link support |
-| Halfops (+h) | native, non-disableable [E7] | ❌ zero halfop symbols in source [E4]; live 005 `PREFIX=(ov)@+` o/v only [E5] | ✅ | implement +h upstream (**M-1**, milestone [0.1.0](https://github.com/0xf01d/azzurra-stacks/milestone/1)) — restores azzurra HOP tiering; cost: medium C work [E4/E5] | o/v-only modern semantics (current) + services-side access tiers; halfops stay absent [E5] |
-| Cloaking | umode +x (ircd-side) [E7] | ❌ no ircd-side cloak implementation (docs-only mentions) [E4] | ✅ HostServ vHost [E6] | ircd-side cloak module (**M-3**, #9) — restores umode +x hashed-host cloaking; cost: medium [E4] | HostServ vHost (current) — per-account vHosts, no ircd code [E6] |
-| Registered nick umode +r | yes [E7] | ✅ set via services [E2: registered client] | n/a (sets +r) | +r set via services (unchanged from azzurra) [E2] | same mechanism, services-set [E2] |
-| Reg-only join (+R) | ✅ [E7] | ✅ | sets +R | +R reg-only join (unchanged) [E7] | same [E7] |
-| No-color (+c) | ✅ [E7] | ✅ | n/a (ircd) | +c (unchanged) [E7] | same [E7] |
-| No-CTCP (+C) | ✅ [E7] | ✅ | n/a (ircd) | +C (unchanged) [E7] | same [E7] |
-| Oper-only (+O) | ✅ [E7] | ✅ | n/a (ircd) | +O (unchanged) [E7] | same [E7] |
-| SSL-only (+S umode/+S chmode) | ✅ umode+chmode [E7] | ⚠️ no dedicated TLS-only channel-mode flag in source [E4]; TLS enforcement is listener-level (ssl listen blocks) | n/a (ircd) | +S umode/chmode upstream (**M-4**, #10) — restores azzurra SSL-only semantics; cost: low-medium [E4] | listener-level TLS policy (current); per-port, not per-channel [E4] |
-| Moderated-for-unreg (+M) | ✅ [E7] | ✅ `MODE_REGONLY` registered-only semantics (`include/channel.h:178`, enforced `modules/m_invite.c:174`) [E4] | sets +M | +M registered-only (unchanged) [E4] | same [E4] |
-| No-nick-change (+d) | ✅ [E7] | ❌ no mode flag in source [E4] | n/a | implement +d (**M-6**, #12) — restores no-nick-change; cost: medium [E4] | accept gap (current) [E4] |
-| No-spam (+u) | ✅ [E7] | ❌ no mode flag in source [E4] | n/a | implement +u (**M-6**, #12) — restores no-spam; cost: medium [E4] | accept gap (current) [E4] |
-| Hide banlist (+B) | ✅ [E7] | ⚠️ +b view restricted to ops by default | n/a | azzurra banlist-hiding resyntax (**M-7**, #13) — restores +B; cost: medium [E4] | ops-restricted +b view (current) [E4] |
-| Registered-join restrict (+j) | ✅ registered-join [E7] | ⚠️ +j = join throttle [E4] | n/a | registered-join semantics (**M-7**, #13) — restores +j; cost: medium [E4] | join throttle (current) [E4] |
-| Ban exceptions (+e) | ❌ [E7] | ✅ (28 source files) [E4] | n/a | n/a — azzurra had none [E7] | keep ADDITIVE +e (28 source files) [E4] |
-| INVEX (+I) | ❌ [E7] | ✅ (19 source files) [E4] | n/a | n/a — azzurra had none [E7] | keep ADDITIVE +I (19 source files) [E4] |
-| Extbans ($-syntax) | ❌ (EBMODE token, +z only) [E7] | ✅ (22 source files) [E4] | n/a | n/a — azzurra had EBMODE token only [E7] | keep ADDITIVE $-extbans (22 source files) [E4] |
-| WATCH/MONITOR | WATCH [E7] | ✅ MONITOR (28 source files) [E4] | n/a | optional WATCH compatibility module (upstream work) [E7] | MONITOR (current, modern; 28 source files) [E4] |
-| SILENCE | ✅ [E7] | ✅ | n/a | SILENCE (10) (unchanged) [E7] | same [E7] |
-| DCCALLOW | ✅ (5 files) [E7] | ❌ absent in source [E4] | n/a | DCCALLOW (**M-6**, #12) — restores the user-managed DCC allowlist; cost: medium [E4/E7] | accept gap (current) [E4] |
-| SHUN | ✅ [E7] | ✅ | n/a | SHUN (unchanged) [E7] | same [E7] |
-| IRCv3 CAP framework | ❌ [E7] | ✅ message-tags (123 files), server-time, account-notify, extended-join [E4] | n/a | n/a — azzurra pre-CAP [E7] | keep ADDITIVE IRCv3: message-tags (123 files), server-time, account-notify, extended-join [E4] |
-| SeenServ | ✅ built-in [E7] | ❌ | ✅ contrib cs_seen in tree [E6] | contrib cs_seen load (config-only parity; module in tree [E6]) — cost: one config line | native SeenServ-style service (upstream work) or accept gap |
-| StatServ | ✅ built-in [E7] | ❌ | ✅ statserv native [E6] | statserv native (parity, unchanged) [E6] | continue native statserv [E6] |
-| RootServ hierarchy | ✅ (SRA list) [E7] | ❌ (opers + services root) | ✅ OperServ + services root [E6] | OperServ + services-root mapping (current) — covers SRA functions without a new service [E6] | dedicated RootServ-equivalent service (**M-5**, #11) — azzurra-style UX; cost: high [E6] |
-| Nick enforcement | RELEASE + enforcer (300s) [E7] | n/a | ✅ RELEASE/ENFORCER [E6] | RELEASE + ENFORCER (unchanged) [E6] | same [E6] |
-| Email-verified registration | ✅ (EMAIL:1, sendmail) [E7] | n/a | ✅ configurable [E6] | EMAIL-confirmed registration enabled in deployment config (parity values; config-only) [E6] | same config, or atheme defaults (drifts from azzurra) |
-| Nick expiry | 40d [E7] | n/a | ✅ configurable [E6] | 40d expiry in deployment config (parity value; config-only) [E7] | atheme defaults (drifts from azzurra 40d) |
-| Channel expiry | 40d [E7] | n/a | ✅ configurable [E6] | 40d expiry in deployment config (parity value; config-only) [E7] | atheme defaults (drifts from azzurra 40d) |
-| MemoServ | ✅ (21d expiry) [E7] | n/a | ✅ MemoServ [E6] | MemoServ (unchanged, 21d expiry) [E6/E7] | same [E6] |
-| SASL authentication | ❌ [E7] | n/a | ✅ saslserv [E6] | n/a — azzurra pre-SASL [E7] | keep ADDITIVE saslserv [E6] |
-| HostServ vHosts | ❌ (+x cloaks only) [E7] | n/a | ✅ hostserv [E6] | n/a — azzurra +x cloaks only [E7] | keep ADDITIVE hostserv; canonical cloaking path (see [O4](#o4)) [E6] |
-| BotServ | ❌ [E7] | n/a | ✅ botserv [E6] | n/a — azzurra had none [E7] | keep ADDITIVE botserv [E6] |
-| GroupServ teams | ❌ [E7] | n/a | ✅ groupserv [E6] | n/a — azzurra had none [E7] | keep ADDITIVE groupserv [E6] |
-| ChanFix | ❌ [E7] | n/a | ✅ chanfix [E6] | n/a — azzurra had none [E7] | keep ADDITIVE chanfix [E6] |
-| GameServ/RPGServ | ❌ [E7] | n/a | ✅ gameserv/rpgserv [E6] | n/a — azzurra had none [E7] | keep ADDITIVE gameserv/rpgserv (optional load) [E6] |
-| ALIS channel search | ❌ [E7] | n/a | ✅ alis [E6] | n/a — azzurra had none [E7] | keep ADDITIVE alis (optional load) [E6] |
-| Access model | CFOUNDER/SOP/AOP/HOP/AVOICE tiers [E7] | n/a | ✅ XOP + ACL [E6] | XOP tiers cover the HOP tier (the +h half is [M-1](https://github.com/0xf01d/azzurra-stacks/issues/6)) [E6] | ACL granularity (current, finer than XOP) [E6] |
-| WEBIRC | ✅ [E7] | ✅ (3 source files) [E4] | n/a | WEBIRC (unchanged) [E4] | same [E4] |
-| HAProxy ingress | ✅ [E7] | ❌ native PROXY protocol (no handshake handling in source [E4]); ✅ WEBIRC available [E4] | n/a | WEBIRC passthrough (current) — keeps the azzurra-era ingress shape, zero code [E4] | native PROXY-protocol listener (**M-2**, #7) — modern mechanism; cost: medium C work [E4] |
-| Flood/clone detection | services-side tiers + clone warn→kill [E7] | ircd throttle [E4] | ✅ services limits [E6] | azzurra tiers + clone-percentage guard (**M-8**, #14) — restores warn→globops→kill; cost: medium-high [E7] | two-layer enforcement: ircd throttle + services limits (current) [E4/E6] |
+| Group | Capability | azzurra-production | solanum-it | atheme-it | Backward-compatibility option | Forward option |
+|---|---|---|---|---|---|---|
+| protocol | S2S protocol | TS3 + CAPAB tokens, no SID/UID [E7](#ev-e7) | TS6 (SID/UID) [E1: live link](#ev-e1) | links as TS6/U-lined service [E1: 2-server net](#ev-e1) | TS3/CAPAB compatibility protocol module in solanum-it (upstream work, heavy; re-opens legacy-link support) [E7](#ev-e7) | TS6 SID/UID linking (current, live [E1](#ev-e1)) — modern, no legacy-link support |
+| CHMODE | Halfops (+h) | native, non-disableable [E7](#ev-e7) | ❌ zero halfop symbols in source [E4](#ev-e4); live 005 `PREFIX=(ov)@+` o/v only [E5](#ev-e5) | ✅ | implement +h upstream (**M-1**, milestone [0.1.0](https://github.com/0xf01d/azzurra-stacks/milestone/1)) — restores azzurra HOP tiering; cost: medium C work [E4](#ev-e4)/[E5](#ev-e5) | o/v-only modern semantics (current) + services-side access tiers; halfops stay absent [E5](#ev-e5) |
+| UMODE | Cloaking | umode +x (ircd-side) [E7](#ev-e7) | ❌ no ircd-side cloak implementation (docs-only mentions) [E4](#ev-e4) | ✅ HostServ vHost [E6](#ev-e6) | ircd-side cloak module (**M-3**, #9) — restores umode +x hashed-host cloaking; cost: medium [E4](#ev-e4) | HostServ vHost (current) — per-account vHosts, no ircd code [E6](#ev-e6) |
+| UMODE | Registered nick umode +r | yes [E7](#ev-e7) | ✅ set via services [E2: registered client](#ev-e2) | n/a (sets +r) | +r set via services (unchanged from azzurra) [E2](#ev-e2) | same mechanism, services-set [E2](#ev-e2) |
+| CHMODE | Reg-only join (+R) | ✅ [E7](#ev-e7) | ✅ | sets +R | +R reg-only join (unchanged) [E7](#ev-e7) | same [E7](#ev-e7) |
+| CHMODE | No-color (+c) | ✅ [E7](#ev-e7) | ✅ | n/a (ircd) | +c (unchanged) [E7](#ev-e7) | same [E7](#ev-e7) |
+| CHMODE | No-CTCP (+C) | ✅ [E7](#ev-e7) | ✅ | n/a (ircd) | +C (unchanged) [E7](#ev-e7) | same [E7](#ev-e7) |
+| CHMODE | Oper-only (+O) | ✅ [E7](#ev-e7) | ✅ | n/a (ircd) | +O (unchanged) [E7](#ev-e7) | same [E7](#ev-e7) |
+| CHMODE | SSL-only (+S umode/+S chmode) | ✅ umode+chmode [E7](#ev-e7) | ⚠️ no dedicated TLS-only channel-mode flag in source [E4](#ev-e4); TLS enforcement is listener-level (ssl listen blocks) | n/a (ircd) | +S umode/chmode upstream (**M-4**, #10) — restores azzurra SSL-only semantics; cost: low-medium [E4](#ev-e4) | listener-level TLS policy (current); per-port, not per-channel [E4](#ev-e4) |
+| CHMODE | Moderated-for-unreg (+M) | ✅ [E7](#ev-e7) | ✅ `MODE_REGONLY` registered-only semantics (`include/channel.h:178`, enforced `modules/m_invite.c:174`) [E4](#ev-e4) | sets +M | +M registered-only (unchanged) [E4](#ev-e4) | same [E4](#ev-e4) |
+| CHMODE | No-nick-change (+d) | ✅ [E7](#ev-e7) | ❌ no mode flag in source [E4](#ev-e4) | n/a | implement +d (**M-6**, #12) — restores no-nick-change; cost: medium [E4](#ev-e4) | accept gap (current) [E4](#ev-e4) |
+| CHMODE | No-spam (+u) | ✅ [E7](#ev-e7) | ❌ no mode flag in source [E4](#ev-e4) | n/a | implement +u (**M-6**, #12) — restores no-spam; cost: medium [E4](#ev-e4) | accept gap (current) [E4](#ev-e4) |
+| CHMODE | Hide banlist (+B) | ✅ [E7](#ev-e7) | ⚠️ +b view restricted to ops by default | n/a | azzurra banlist-hiding resyntax (**M-7**, #13) — restores +B; cost: medium [E4](#ev-e4) | ops-restricted +b view (current) [E4](#ev-e4) |
+| CHMODE | Registered-join restrict (+j) | ✅ registered-join [E7](#ev-e7) | ⚠️ +j = join throttle [E4](#ev-e4) | n/a | registered-join semantics (**M-7**, #13) — restores +j; cost: medium [E4](#ev-e4) | join throttle (current) [E4](#ev-e4) |
+| CHMODE | Ban exceptions (+e) | ❌ [E7](#ev-e7) | ✅ (28 source files) [E4](#ev-e4) | n/a | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE +e (28 source files) [E4](#ev-e4) |
+| CHMODE | INVEX (+I) | ❌ [E7](#ev-e7) | ✅ (19 source files) [E4](#ev-e4) | n/a | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE +I (19 source files) [E4](#ev-e4) |
+| CHMODE | Extbans ($-syntax) | ❌ (EBMODE token, +z only) [E7](#ev-e7) | ✅ (22 source files) [E4](#ev-e4) | n/a | n/a — azzurra had EBMODE token only [E7](#ev-e7) | keep ADDITIVE $-extbans (22 source files) [E4](#ev-e4) |
+| protocol | WATCH/MONITOR | WATCH [E7](#ev-e7) | ✅ MONITOR (28 source files) [E4](#ev-e4) | n/a | optional WATCH compatibility module (upstream work) [E7](#ev-e7) | MONITOR (current, modern; 28 source files) [E4](#ev-e4) |
+| protocol | SILENCE | ✅ [E7](#ev-e7) | ✅ | n/a | SILENCE (10) (unchanged) [E7](#ev-e7) | same [E7](#ev-e7) |
+| ircd core | DCCALLOW | ✅ (5 files) [E7](#ev-e7) | ❌ absent in source [E4](#ev-e4) | n/a | DCCALLOW (**M-6**, #12) — restores the user-managed DCC allowlist; cost: medium [E4](#ev-e4)/[E7](#ev-e7) | accept gap (current) [E4](#ev-e4) |
+| ircd core | SHUN | ✅ [E7](#ev-e7) | ✅ | n/a | SHUN (unchanged) [E7](#ev-e7) | same [E7](#ev-e7) |
+| protocol | IRCv3 CAP framework | ❌ [E7](#ev-e7) | ✅ message-tags (123 files), server-time, account-notify, extended-join [E4](#ev-e4) | n/a | n/a — azzurra pre-CAP [E7](#ev-e7) | keep ADDITIVE IRCv3: message-tags (123 files), server-time, account-notify, extended-join [E4](#ev-e4) |
+| services | SeenServ | ✅ built-in [E7](#ev-e7) | ❌ | ✅ contrib cs_seen in tree [E6](#ev-e6) | contrib cs_seen load (config-only parity; module in tree [E6](#ev-e6)) — cost: one config line | native SeenServ-style service (upstream work) or accept gap |
+| services | StatServ | ✅ built-in [E7](#ev-e7) | ❌ | ✅ statserv native [E6](#ev-e6) | statserv native (parity, unchanged) [E6](#ev-e6) | continue native statserv [E6](#ev-e6) |
+| services | RootServ hierarchy | ✅ (SRA list) [E7](#ev-e7) | ❌ (opers + services root) | ✅ OperServ + services root [E6](#ev-e6) | OperServ + services-root mapping (current) — covers SRA functions without a new service [E6](#ev-e6) | dedicated RootServ-equivalent service (**M-5**, #11) — azzurra-style UX; cost: high [E6](#ev-e6) |
+| services | Nick enforcement | RELEASE + enforcer (300s) [E7](#ev-e7) | n/a | ✅ RELEASE/ENFORCER [E6](#ev-e6) | RELEASE + ENFORCER (unchanged) [E6](#ev-e6) | same [E6](#ev-e6) |
+| services | Email-verified registration | ✅ (EMAIL:1, sendmail) [E7](#ev-e7) | n/a | ✅ configurable [E6](#ev-e6) | EMAIL-confirmed registration enabled in deployment config (parity values; config-only) [E6](#ev-e6) | same config, or atheme defaults (drifts from azzurra) |
+| services | Nick expiry | 40d [E7](#ev-e7) | n/a | ✅ configurable [E6](#ev-e6) | 40d expiry in deployment config (parity value; config-only) [E7](#ev-e7) | atheme defaults (drifts from azzurra 40d) |
+| services | Channel expiry | 40d [E7](#ev-e7) | n/a | ✅ configurable [E6](#ev-e6) | 40d expiry in deployment config (parity value; config-only) [E7](#ev-e7) | atheme defaults (drifts from azzurra 40d) |
+| services | MemoServ | ✅ (21d expiry) [E7](#ev-e7) | n/a | ✅ MemoServ [E6](#ev-e6) | MemoServ (unchanged, 21d expiry) [E6](#ev-e6)/[E7](#ev-e7) | same [E6](#ev-e6) |
+| services | SASL authentication | ❌ [E7](#ev-e7) | n/a | ✅ saslserv [E6](#ev-e6) | n/a — azzurra pre-SASL [E7](#ev-e7) | keep ADDITIVE saslserv [E6](#ev-e6) |
+| services | HostServ vHosts | ❌ (+x cloaks only) [E7](#ev-e7) | n/a | ✅ hostserv [E6](#ev-e6) | n/a — azzurra +x cloaks only [E7](#ev-e7) | keep ADDITIVE hostserv; canonical cloaking path (see [O4](#o4)) [E6](#ev-e6) |
+| services | BotServ | ❌ [E7](#ev-e7) | n/a | ✅ botserv [E6](#ev-e6) | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE botserv [E6](#ev-e6) |
+| services | GroupServ teams | ❌ [E7](#ev-e7) | n/a | ✅ groupserv [E6](#ev-e6) | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE groupserv [E6](#ev-e6) |
+| services | ChanFix | ❌ [E7](#ev-e7) | n/a | ✅ chanfix [E6](#ev-e6) | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE chanfix [E6](#ev-e6) |
+| services | GameServ/RPGServ | ❌ [E7](#ev-e7) | n/a | ✅ gameserv/rpgserv [E6](#ev-e6) | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE gameserv/rpgserv (optional load) [E6](#ev-e6) |
+| services | ALIS channel search | ❌ [E7](#ev-e7) | n/a | ✅ alis [E6](#ev-e6) | n/a — azzurra had none [E7](#ev-e7) | keep ADDITIVE alis (optional load) [E6](#ev-e6) |
+| services | Access model | CFOUNDER/SOP/AOP/HOP/AVOICE tiers [E7](#ev-e7) | n/a | ✅ XOP + ACL [E6](#ev-e6) | XOP tiers cover the HOP tier (the +h half is [M-1](https://github.com/0xf01d/azzurra-stacks/issues/6)) [E6](#ev-e6) | ACL granularity (current, finer than XOP) [E6](#ev-e6) |
+| ingress | WEBIRC | ✅ [E7](#ev-e7) | ✅ (3 source files) [E4](#ev-e4) | n/a | WEBIRC (unchanged) [E4](#ev-e4) | same [E4](#ev-e4) |
+| ingress | HAProxy ingress | ✅ [E7](#ev-e7) | ❌ native PROXY protocol (no handshake handling in source [E4](#ev-e4)); ✅ WEBIRC available [E4](#ev-e4) | n/a | WEBIRC passthrough (current) — keeps the azzurra-era ingress shape, zero code [E4](#ev-e4) | native PROXY-protocol listener (**M-2**, #7) — modern mechanism; cost: medium C work [E4](#ev-e4) |
+| ircd core | Flood/clone detection | services-side tiers + clone warn→kill [E7](#ev-e7) | ircd throttle [E4](#ev-e4) | ✅ services limits [E6](#ev-e6) | azzurra tiers + clone-percentage guard (**M-8**, #14) — restores warn→globops→kill; cost: medium-high [E7](#ev-e7) | two-layer enforcement: ircd throttle + services limits (current) [E4](#ev-e4)/[E6](#ev-e6) |
 
 <a name="options"></a>
 ## Options (O1–O11 — formerly Decisions D1–D11)
@@ -215,10 +215,10 @@ tracked in the
 milestone, each with its upstream repository:
 
 - **M-1 — halfops (+h) in solanum-it.** Azzurra channels rely on HOP tiering;
-  solanum-it has no halfop support at all [E4, E5]. Upstream repo:
+  solanum-it has no halfop support at all [E4](#ev-e4)/[E5](#ev-e5). Upstream repo:
   `0xf01d/solanum-it`.
 - **M-2 — native PROXY-protocol listener in solanum-it** (issue #7). Removes
-  the WEBIRC dependency for HAProxy ingress [E4]. Upstream repo:
+  the WEBIRC dependency for HAProxy ingress [E4](#ev-e4). Upstream repo:
   `0xf01d/solanum-it`.
 - **M-3 — ircd-side cloak module (+x) in solanum-it** (issue #9). O4 parity
   path. Upstream repo: `0xf01d/solanum-it`.

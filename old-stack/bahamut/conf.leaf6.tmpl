@@ -1,0 +1,42 @@
+# bahamut leaf-v6 conf — rendered from conf.leaf6.tmpl by entrypoint.sh.
+# Autoconnects to ${HUB}:${HUB_PORT} over IPv6 ULA (leaf6-net, fd00:a22e::/64).
+
+M:${SERVER_NAME}:*:${SERVER_DESC}:
+A:${SERVER_DESC}:testnet admin:root@${SERVER_NAME}:
+
+Y:1:90:0:512:150000
+Y:3:90:0:20:4000000
+Y:50:90:0:0:5000000
+# Autoconnect class. connfreq=2s — see conf.leaf4.tmpl for rationale.
+Y:60:90:2:1:12000000
+
+I:*@*::*@*::1
+
+O:*@*:${OPER_PASS_HASH}:${OPER_NICK}:OaARD:3
+O:*@*:${AZZURRA_OPER_PASS_HASH}:azzurra:moOARD:3
+
+P:*:::${LISTEN_PORT}
+P:*::S:${LISTEN_SSL_PORT}
+
+# Outbound S2S to the hub. Bahamut is INET4-only here (options.h
+# #undef INET6) but leaf6-net has IPv6 enabled, so docker's resolver
+# returns the hub's ULA AAAA first and bahamut silently fails to dial.
+# Use the hub's IPv4 static directly — bare IP (NOT `*@<ip>`); the
+# parser at s_conf.c:1660 prepends `*@` and lookup_confhost stores
+# ipnum via inet_pton (s_conf.c:1910), so connect_server skips the
+# resolver entirely (s_bsd.c:2524 takes the cached-ipnum branch). The
+# C/N name field stays as the hub's hostname so name-based lookups in
+# find_conf_name still match.
+C:${HUB_IP}:${LEAF_PASSWORD}:${HUB}:${HUB_PORT}:60
+N:${HUB_IP}:${LEAF_PASSWORD}:${HUB}::60
+
+H:*::${HUB}
+
+# U-line for services. See conf.leaf4.tmpl for the full why; in short:
+# every leaf needs its own U: line because FLAGS_ULINE is set per-ircd
+# from local conf, and m_svsmode rejects (silently) any SVSMODE that
+# arrives from a non-U-lined source — so NickServ +r never lands on
+# locally-connected users without this line.
+U:services.azzurra.chat:*:*:
+
+K:*:Do not IRC as root:root:

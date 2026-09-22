@@ -1,0 +1,45 @@
+# Old-stack CI: legacy Azzurra stack (3x bahamut ircd + azzurra-services)
+# built from pinned upstream refs, linked, and verified end to end.
+#
+# NOTE: the ghcr.io/azzurra/* prebuilt packages are PRIVATE (anonymous pull
+# rejected), so this builds from source via old-stack/compose.yaml
+# (bahamut 178ada51…, services 5b38d025…). Roughly five minutes of build,
+# well inside the job timeout. Nothing here needs a self-hosted runner —
+# GitHub-hosted ubuntu-latest suffices (unlike the forgejo CI on git.lkl.li).
+#
+# Scheduled runs live in the sibling old-stack-schedule.yml.
+
+name: old-stack
+
+on:
+  push:
+    paths:
+      - "old-stack/**"
+      - ".github/workflows/old-stack.yml"
+  pull_request:
+    paths:
+      - "old-stack/**"
+      - ".github/workflows/old-stack.yml"
+  workflow_dispatch:
+
+jobs:
+  old-stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and bring up old stack (3 ircd + services)
+        working-directory: old-stack
+        run: docker compose -f compose.yaml up -d --build --wait
+
+      - name: Verify links, whois, and services round-trip
+        run: old-stack/scripts/verify.sh
+
+      - name: Stack logs on failure
+        if: failure()
+        working-directory: old-stack
+        run: |
+          docker compose -f compose.yaml ps || true
+          docker compose -f compose.yaml logs --tail=200 \
+            hub leaf-v4 leaf-v6 services || true

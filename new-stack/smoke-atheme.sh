@@ -38,6 +38,25 @@ while IFS= read -r d; do
     export LD_LIBRARY_PATH="${d}:${LD_LIBRARY_PATH:-}"
 done < <(find "${SOLANUM_PREFIX}/lib" "${ATHEME_PREFIX}/lib" -mindepth 1 -maxdepth 1 -type d 2>/dev/null)
 
+# --- privilege drop -----------------------------------------------------------
+# Both daemons refuse to run as root (verified: conftest/boot fail on a clean
+# root container). In root CI runners, drop to a runtime user for everything
+# that executes the ircd/services; root only keeps package mgmt + builds.
+if [ "$(id -u)" = "0" ]; then
+    RUNTIME_USER="${RUNTIME_USER:-smokerun}"
+    id -u "${RUNTIME_USER}" >/dev/null 2>&1 || \
+        useradd --system --create-home --home-dir "/home/${RUNTIME_USER}" \
+                --shell /bin/bash "${RUNTIME_USER}"
+    chown -R "${RUNTIME_USER}:${RUNTIME_USER}" \
+        "${WORKDIR}" "${SOLANUM_PREFIX}" "${ATHEME_PREFIX}"
+    run_as_user() {
+        setpriv --reuid="${RUNTIME_USER}" --regid="${RUNTIME_USER}" --clear-groups \
+            env LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}" HOME="/home/${RUNTIME_USER}" "$@"
+    }
+else
+    run_as_user() { "$@"; }
+fi
+
 # --- stale-state cleanup (idempotent reruns) --------------------------------
 pkill -9 -f "bin/solanum" 2>/dev/null || true
 pkill -9 -f atheme-services 2>/dev/null || true
@@ -71,9 +90,9 @@ PY
 # absolute paths are mandatory (relative ones silently miss).
 IRCDCONF="${WORKDIR}/ircd.conf"
 SVCCONF="${WORKDIR}/services.conf"
-"${SOLANUM}" -conftest "${IRCDCONF}" && echo "SMOKE: ircd conf validates"
+run_as_user "${SOLANUM}" -conftest "${IRCDCONF}" && echo "SMOKE: ircd conf validates"
 
-"${SOLANUM}" -foreground -configfile "${IRCDCONF}" > ircd.out 2>&1 &
+run_as_user "${SOLANUM}" -foreground -configfile "${IRCDCONF}" > ircd.out 2>&1 &
 sleep 5
 
 # --- services.conf -----------------------------------------------------------
@@ -109,8 +128,8 @@ general {
 };
 EOF
 
-"${ATHEME}" -b -c "${SVCCONF}" > dbinit.out 2>&1
-"${ATHEME}" -c "${SVCCONF}" > services.out 2>&1 &
+run_as_user "${ATHEME}" -b -c "${SVCCONF}" > dbinit.out 2>&1
+run_as_user "${ATHEME}" -c "${SVCCONF}" > services.out 2>&1 &
 sleep 8
 
 # --- client: NickServ end to end ---------------------------------------------
@@ -174,7 +193,8 @@ send("QUIT :done")
 PY
 
 fail=0
-if ! "${SOLANUM}" -conftest ./ircd.conf >/dev/null 2>&1; then
+
+if ! run_as_user "${SOLANUM}" -conftest "${IRCDCONF}" >/dev/null 2>&1; then
     echo "SMOKE: ircd conftest FAILED"
     fail=1
 fi

@@ -7,7 +7,7 @@
 #   PREFIX        install prefix              (default: <repo>/install/atheme)
 #   PATCH_DIR     directory holding patches   (default: <script>/patches)
 #
-# Requires: gcc, autoconf, automake, aclocal, pkg-config, libltdl-dev.
+# Requires: gcc, autoconf, automake, aclocal (gettext for the iconv/lib-link m4 macros), pkg-config, libltdl-dev.
 # The pinned atheme-it configure.ac calls AC_LANG() before AC_INIT(), which
 # breaks regeneration with modern autoconf; we ship the minimal reorder as
 # patches/0001-fix-configure-ac-ac-init-before-ac-lang.patch and apply it

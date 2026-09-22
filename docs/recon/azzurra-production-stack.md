@@ -32,35 +32,54 @@ No IRCv3 CAP framework [INFERENCE: none seen in headers]; ISUPPORT list generate
 - Extras: DH DKEY exchange, RC4 link encryption, gzipped links, NICKIP, TSMODE, SOB/EOB.
 - Constraint: **only TS-protocol, non-TS6 services can link**. Generic Bahamut protocol modules exist upstream in atheme and Anope, but azzurra's -azzurra(4.8) tokens/umodes (EBMODE, +z/+S, SVSNICK flags) mean the network's own services are the reference link peer [INFERENCE for third-party module patch needs].
 
-## 4. CAPABILITY MATRIX SKELETON
-| Capability | azzurra-production | solanum-it | atheme-it | Gap notes |
+## 4. CAPABILITY COMPARISON (RESOLVED)
+
+Filled from the definitive capability report: `matrix/capability-matrix.md`
+(merged c8d86d2 — evidence refs E1-E7, decisions D1-D11, constraints C1-C2;
+issue #4). Verdicts below; full per-cell evidence lives in the report.
+
+| Capability | azzurra-production | solanum-it | atheme-it | Verdict |
 |---|---|---|---|---|
-| S2S protocol | TS + CAPAB tokens | TS6 (SID/UID) | n/a | TODO verify our forks |
-| Halfops (+h) | native, non-disableable | yes | yes | TODO |
-| Cloaking | umode +x | +x-style | n/a | TODO |
-| Registered nick umode | +r | +r | n/a | TODO |
-| Reg-only channel (+R) | yes | +R | n/a | TODO |
-| No-color (+c) | yes | +c | n/a | TODO |
-| No-CTCP (+C) | yes | +C | n/a | TODO |
-| Oper-only (+O) | yes | +O | n/a | TODO |
-| SSL-only (+S) | yes | TLS modes | n/a | TODO |
-| Moderated-for-unreg (+M) | yes | +M | n/a | TODO |
-| Hide banlist (+B) | yes | +b world | n/a | TODO |
-| Registered-join restrict (+j/+z) | two flavors | +z extban differs | n/a | TODO |
-| Ban exceptions (+e) | no | yes | n/a | TODO |
-| INVEX (+I) | no | yes | n/a | TODO |
-| Extbans | none (EBMODE token only) | $-extbans | n/a | TODO |
-| WATCH/MONITOR | WATCH | MONITOR | n/a | TODO |
-| SILENCE | yes (10) | yes | n/a | TODO |
-| DCCALLOW | yes | no | n/a | TODO |
-| SHUN | yes | yes | n/a | TODO |
-| IRCv3 CAP | no | yes | n/a | TODO |
-| SeenServ | built-in | n/a | 3rd-party modules | TODO |
-| StatServ | built-in | n/a | stats module | TODO |
-| RootServ hierarchy | yes | n/a | OperServ equivalent | TODO |
-| Nick enforcement | RELEASE + enforcer (300s) | n/a | RELEASE/ENFORCER | TODO |
-| Email-verified reg | yes (EMAIL:1) | n/a | configurable | TODO |
-| WEBIRC/HAProxy ingress | both | webirc | n/a | TODO |
+| S2S protocol | TS + CAPAB tokens [E7] | TS6 (SID/UID), live link [E1] | U-lined TS6 service [E1] | intentional modernization; no backport |
+| Halfops (+h) | native, non-disableable [E7] | absent: zero source symbols, live 005 `PREFIX=(ov)@+` [E4/E5] | present [E6] | upstream removal → gap M-1 (milestone 0.1.0) |
+| Cloaking | umode +x [E7] | no ircd-side cloak implementation [E4] | HostServ vHost [E6] | D4: cloaking is services-side |
+| Registered nick umode (+r) | +r [E7] | set via services [E2] | sets +r | none |
+| Reg-only channel (+R) | yes [E7] | yes | sets +R | none |
+| No-color (+c) | yes [E7] | yes | n/a (ircd) | none |
+| No-CTCP (+C) | yes [E7] | yes | n/a (ircd) | none |
+| Oper-only (+O) | yes [E7] | yes | n/a (ircd) | none |
+| SSL-only (+S) | umode+chmode [E7] | listener-level TLS; no dedicated +S flag [E4] | n/a (ircd) | D5: TLS-only enforced at the listener |
+| Moderated-for-unreg (+M) | yes [E7] | `MODE_REGONLY` registered-only [E4] | sets +M | none |
+| Hide banlist (+B) | yes [E7] | +b view restricted to ops [E4] | n/a (ircd) | D10: semantics differ, no port |
+| Registered-join restrict (+j/+z) | two flavors [E7] | +j = join throttle [E4] | n/a (ircd) | D10: semantics differ, no port |
+| Ban exceptions (+e) | no [E7] | yes (28 source files) [E4] | n/a | ADDITIVE |
+| INVEX (+I) | no [E7] | yes (19 source files) [E4] | n/a | ADDITIVE |
+| Extbans | EBMODE token only [E7] | $-extbans (22 source files) [E4] | n/a | ADDITIVE |
+| WATCH/MONITOR | WATCH [E7] | MONITOR (28 source files) [E4] | n/a | ADDITIVE (modern) |
+| SILENCE | yes (10) [E7] | yes | n/a | none |
+| DCCALLOW | yes (5 files) [E7] | absent [E4] | n/a | D9: not ported (legacy) |
+| SHUN | yes [E7] | yes | n/a | none |
+| IRCv3 CAP | no [E7] | message-tags (123 files), server-time, account-notify, extended-join [E4] | n/a | ADDITIVE |
+| SeenServ | built-in [E7] | n/a | contrib cs_seen in tree [E6] | D7: loaded in deployment config |
+| StatServ | built-in [E7] | n/a | statserv native [E6] | parity achieved |
+| RootServ hierarchy | SRA list [E7] | n/a | OperServ + services root [E6] | D8: maps to OperServ + services root |
+| Nick enforcement | RELEASE + enforcer (300s) [E7] | n/a | RELEASE/ENFORCER [E6] | none (services-side) |
+| Email-verified reg | EMAIL:1 [E7] | n/a | configurable [E6] | D6: enabled in deployment config |
+| Nick/Chan expiry 40d | NICKEXP/CHANEXP 40d [E7] | n/a | configurable [E6] | D6: 40d in deployment config |
+| MemoServ | yes, 21d expiry [E7] | n/a | MemoServ [E6] | none |
+| SASL authentication | no [E7] | n/a | saslserv [E6] | ADDITIVE |
+| HostServ vHosts | +x cloaks only [E7] | n/a | hostserv [E6] | ADDITIVE; canonical cloaking per D4 |
+| BotServ / GroupServ / ChanFix / GameServ / RPGServ / ALIS | no [E7] | n/a | all present [E6] | ADDITIVE (optional loads) |
+| Access model | CFOUNDER/SOP/AOP/HOP/AVOICE [E7] | n/a | XOP + ACL [E6] | none |
+| WEBIRC/HAProxy ingress | both [E7] | WEBIRC yes (3 files); no PROXY listener [E4] | n/a | D1: HAProxy TCP passthrough + WEBIRC canonical; native PROXY = gap M-2 (milestone 0.1.0) |
+| Flood/clone detection | tiers + clone warn-kill [E7] | ircd throttle [E4] | services limits [E6] | D11: two-layer enforcement |
+
+Upstream implementation gaps tracked in milestone
+[0.1.0 — feature parity](https://github.com/0xf01d/azzurra-stacks/milestone/1):
+M-1 halfops (+h) in solanum-it; M-2 native PROXY-protocol listener in solanum-it.
+Constraints: C1 testnet-only PEMs/cloak.key (rotation mandatory before real
+infra); C2 verify.sh assumes ephemeral runners (teardown required on shared
+runners).
 
 ## 5. REPRO NOTES (CI)
 - **Buildability proven**: azzurra/bahamut and azzurra/services each ship `.github/workflows/build.yml` + `Dockerfile`; full stack dockerized at https://github.com/vjt/azzurra-testnet (hub + leaf-v4 + leaf-v6 + services via docker compose; /map + cross-leaf whois + services round-trip smoke script; GHCR images `ghcr.io/azzurra/bahamut`, `ghcr.io/azzurra/services`; one bahamut binary reused across roles via SERVER_ROLE; v4+v6 S2S; throwaway self-signed certs).

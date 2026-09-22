@@ -1,0 +1,49 @@
+name: new-stack
+
+# Next-generation stack CI: builds solanum-it + atheme-it from pinned
+# revisions and proves the services chain live (NickServ end to end).
+# Pins and the verified configuration gotchas live in new-stack/.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            meson ninja-build bison flex pkg-config \
+            libsqlite3-dev libssl-dev \
+            autoconf automake libtool libltdl-dev \
+            python3 git
+
+      - name: Build solanum-it
+        run: ./new-stack/build-solanum.sh
+
+      - name: Build atheme-it
+        run: ./new-stack/build-atheme.sh
+
+      - name: Smoke — services online, NickServ end to end
+        working-directory: ${{ github.workspace }}
+        run: ./new-stack/smoke-atheme.sh
+
+      - name: Smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-logs
+          path: |
+            /tmp/atheme-smoke.*/ircd.out
+            /tmp/atheme-smoke.*/client.log
+            /tmp/atheme-smoke.*/services.out
+            /tmp/atheme-smoke.*/dbinit.out
+          if-no-files-found: ignore

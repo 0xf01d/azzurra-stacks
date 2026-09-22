@@ -10,7 +10,7 @@ against the -it forks (filled as the CI stacks come online).
 | Capability | azzurra-production | solanum-it | atheme-it | Parity gap / action |
 |---|---|---|---|---|
 | S2S protocol | TS3 + CAPAB tokens, no SID/UID | TS6 (SID/UID) | links as TS6/U-lined service | ❌ intentional: modern protocol; no backport |
-| Halfops (+h) | native, non-disableable | ✅ | ✅ (halfops support) | none |
+| Halfops (+h) | native, non-disableable | ❓ (no halfop symbols in -it includes — verify +h at runtime; likely present under different naming) | ✅ | runtime-verify |
 | Cloaking | umode +x (ircd-side) | ⚠️ via services/IP-less host (verify -it cloak module) | HostServ vHost | decide: umode cloak parity or HostServ-only |
 | Registered nick umode +r | yes | ✅ (+r via services) | n/a (sets +r) | none |
 | Reg-only join (+R) | ✅ | ✅ | sets +R | none |
@@ -23,25 +23,32 @@ against the -it forks (filled as the CI stacks come online).
 | No-spam (+u) | ✅ | ❌ (verify -it) | n/a | evaluate |
 | Hide banlist (+B) | ✅ | ⚠️ solanum: +b view restricted to ops by default | n/a | parity likely achieved differently |
 | Registered-join restrict (+j) | ✅ | ⚠️ solanum +j = join throttle (different meaning) | n/a | semantics differ — document, don't port |
-| Ban exceptions (+e) | ❌ | ✅ | n/a | ADDITIVE (forks ahead) |
-| INVEX (+I) | ❌ | ✅ | n/a | ADDITIVE |
-| Extbans ($-syntax) | ❌ (EBMODE token, +z only) | ✅ | n/a | ADDITIVE |
-| WATCH/MONITOR | WATCH | ✅ MONITOR (+WATCH removed upstream) | n/a | ADDITIVE (modern) |
+| Ban exceptions (+e) | ❌ | ✅ (verified: 28 source files) | n/a | ADDITIVE (forks ahead) |
+| INVEX (+I) | ❌ | ✅ (verified: 19 source files) | n/a | ADDITIVE |
+| Extbans ($-syntax) | ❌ (EBMODE token, +z only) | ✅ (verified: 22 source files) | n/a | ADDITIVE |
+| WATCH/MONITOR | WATCH | ✅ MONITOR (verified: 28 source files) | n/a | ADDITIVE (modern) |
 | SILENCE | ✅ (10) | ✅ | n/a | none |
-| DCCALLOW | ✅ (5) | ❌ | n/a | evaluate: legacy feature |
+| DCCALLOW | ✅ (5) | ❌ (verified absent in -it source) | n/a | evaluate: legacy feature |
 | SHUN | ✅ | ✅ | n/a | none |
-| IRCv3 CAP framework | ❌ | ✅ (server-time, account-notify, extended-join, monitor, message-tags…) | n/a | ADDITIVE |
-| SeenServ | ✅ built-in | ❌ | ⚠️ module (cs_seen) | parity via atheme module |
-| StatServ | ✅ built-in | ❌ | ⚠️ stats module | parity via atheme module |
+| IRCv3 CAP framework | ❌ | ✅ (verified: message-tags 123 files, server-time, account-notify, extended-join) | n/a | ADDITIVE |
+| SeenServ | ✅ built-in | ❌ | ✅ contrib cs_seen (verify enabled in build) | parity via atheme contrib module |
+| StatServ | ✅ built-in | ❌ | ✅ statserv native | parity achieved |
 | RootServ hierarchy | ✅ (SRA list) | ❌ (opers + services root) | OperServ/SRA equivalent | document mapping |
 | Nick enforcement | RELEASE + enforcer (300s) | n/a | ✅ RELEASE/ENFORCER | none (services-side) |
 | Email-verified registration | ✅ (EMAIL:1, sendmail) | n/a | ✅ configurable | none |
 | Nick expiry | 40d | n/a | ✅ configurable (NICK expire) | match 40d in config |
 | Channel expiry | 40d | n/a | ✅ configurable (CHAN expire) | match 40d in config |
 | MemoServ | ✅ (21d expiry) | n/a | ✅ MemoServ | none |
+| SASL authentication | ❌ (pre-SASL era) | n/a | ✅ saslserv | ADDITIVE |
+| HostServ vHosts | ❌ (cloaks ircd-side +x only) | n/a | ✅ hostserv | ADDITIVE (vHost management beyond +x) |
+| BotServ | ❌ | n/a | ✅ botserv | ADDITIVE |
+| GroupServ teams | ❌ | n/a | ✅ groupserv | ADDITIVE |
+| ChanFix | ❌ | n/a | ✅ chanfix | ADDITIVE |
+| GameServ/RPGServ | ❌ | n/a | ✅ gameserv/rpgserv | ADDITIVE (optional load) |
+| ALIS channel search | ❌ | n/a | ✅ alis | ADDITIVE (optional load) |
 | Access model | CFOUNDER/SOP/AOP/HOP/AVOICE xN tiers | n/a | ✅ XOP + ACL | none |
-| WEBIRC | ✅ | ✅ | n/a | none |
-| HAProxy ingress | ✅ | ⚠️ (verify -it PROXY support) | n/a | verify |
+| WEBIRC | ✅ | ✅ (verified: 3 source files) | n/a | none |
+| HAProxy ingress | ✅ | ❓ (no PROXY-protocol hits in -it source; verify at runtime) | n/a | verify at runtime |
 | Flood/clone detection | services-side tiers + clone warn→kill | ircd throttle | ✅ services limits | split across layers |
 
 ## Parity work queue (additive only — zero solanum features removed)

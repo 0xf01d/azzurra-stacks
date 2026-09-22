@@ -10,7 +10,7 @@ against the -it forks (filled as the CI stacks come online).
 | Capability | azzurra-production | solanum-it | atheme-it | Parity gap / action |
 |---|---|---|---|---|
 | S2S protocol | TS3 + CAPAB tokens, no SID/UID | TS6 (SID/UID) | links as TS6/U-lined service | ❌ intentional: modern protocol; no backport |
-| Halfops (+h) | native, non-disableable | ✅ (CHFL_HOPS verified in source) | ✅ | none |
+| Halfops (+h) | native, non-disableable | ❓ (no halfop symbols in -it includes — verify +h at runtime; likely present under different naming) | ✅ | runtime-verify |
 | Cloaking | umode +x (ircd-side) | ⚠️ via services/IP-less host (verify -it cloak module) | HostServ vHost | decide: umode cloak parity or HostServ-only |
 | Registered nick umode +r | yes | ✅ (+r via services) | n/a (sets +r) | none |
 | Reg-only join (+R) | ✅ | ✅ | sets +R | none |

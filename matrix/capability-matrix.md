@@ -39,6 +39,13 @@ against the -it forks (filled as the CI stacks come online).
 | Nick expiry | 40d | n/a | ✅ configurable (NICK expire) | match 40d in config |
 | Channel expiry | 40d | n/a | ✅ configurable (CHAN expire) | match 40d in config |
 | MemoServ | ✅ (21d expiry) | n/a | ✅ MemoServ | none |
+| SASL authentication | ❌ (pre-SASL era) | n/a | ✅ saslserv | ADDITIVE |
+| HostServ vHosts | ❌ (cloaks ircd-side +x only) | n/a | ✅ hostserv | ADDITIVE (vHost management beyond +x) |
+| BotServ | ❌ | n/a | ✅ botserv | ADDITIVE |
+| GroupServ teams | ❌ | n/a | ✅ groupserv | ADDITIVE |
+| ChanFix | ❌ | n/a | ✅ chanfix | ADDITIVE |
+| GameServ/RPGServ | ❌ | n/a | ✅ gameserv/rpgserv | ADDITIVE (optional load) |
+| ALIS channel search | ❌ | n/a | ✅ alis | ADDITIVE (optional load) |
 | Access model | CFOUNDER/SOP/AOP/HOP/AVOICE xN tiers | n/a | ✅ XOP + ACL | none |
 | WEBIRC | ✅ | ✅ (verified: 3 source files) | n/a | none |
 | HAProxy ingress | ✅ | ❓ (no PROXY-protocol hits in -it source; verify at runtime) | n/a | verify at runtime |

@@ -16,6 +16,9 @@
 set -uo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
+# Absolute self path: the root path re-execs the script AFTER cd'ing to
+# WORKDIR, so a relative $0 would resolve from the wrong directory (exit 127).
+SELF="${HERE}/$(basename "${BASH_SOURCE[0]}")"
 REPO="$(cd "${HERE}/.." && pwd)"
 SOLANUM_PREFIX="${SOLANUM_PREFIX:-${REPO}/install/solanum}"
 ATHEME_PREFIX="${ATHEME_PREFIX:-${REPO}/install/atheme}"
@@ -66,7 +69,7 @@ if [ "$(id -u)" = "0" ]; then
         env LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}" HOME="/home/${RUNTIME_USER}" \
             SOLANUM_PREFIX="${SOLANUM_PREFIX}" ATHEME_PREFIX="${ATHEME_PREFIX}" \
             WORKDIR="${WORKDIR}" \
-            bash "${BASH_SOURCE[0]}" "$@"
+            bash "${SELF}" "$@"
 fi
 
 # --- ircd.conf: testsuite template + services wiring -------------------------

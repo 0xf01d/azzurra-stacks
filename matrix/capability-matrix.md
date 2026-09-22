@@ -29,7 +29,7 @@ Legend: ✅ native · ⚠️ different mechanism · ❌ absent · n/a services-s
 ircd-side only. Every cell cites its evidence ref.
 
 | Capability | azzurra-production | solanum-it | atheme-it | Backward-compatibility option | Forward option |
-|---|---|---|---|---|
+|---|---|---|---|---|---|
 | S2S protocol | TS3 + CAPAB tokens, no SID/UID [E7] | TS6 (SID/UID) [E1: live link] | links as TS6/U-lined service [E1: 2-server net] | TS3/CAPAB compatibility protocol module in solanum-it (upstream work, heavy; re-opens legacy-link support) [E7] | TS6 SID/UID linking (current, live [E1]) — modern, no legacy-link support |
 | Halfops (+h) | native, non-disableable [E7] | ❌ zero halfop symbols in source [E4]; live 005 `PREFIX=(ov)@+` o/v only [E5] | ✅ | implement +h upstream (**M-1**, milestone [0.1.0](https://github.com/0xf01d/azzurra-stacks/milestone/1)) — restores azzurra HOP tiering; cost: medium C work [E4/E5] | o/v-only modern semantics (current) + services-side access tiers; halfops stay absent [E5] |
 | Cloaking | umode +x (ircd-side) [E7] | ❌ no ircd-side cloak implementation (docs-only mentions) [E4] | ✅ HostServ vHost [E6] | ircd-side cloak module (**M-3**, #9) — restores umode +x hashed-host cloaking; cost: medium [E4] | HostServ vHost (current) — per-account vHosts, no ircd code [E6] |
